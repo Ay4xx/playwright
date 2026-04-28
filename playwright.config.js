@@ -5,24 +5,33 @@ import { defineConfig, devices } from '@playwright/test';
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
+
+// Configuración de Qase (Versión V2 con TestOps)
+const qaseConfig = {
+  mode: process.env.QASE_MODE || 'testops',
+  debug: true, // Ponlo en true para ver logs en la consola si falla la conexión
+  testops: {
+    api: {
+      token: process.env.QASE_API_TOKEN,
+    },
+    project: process.env.QASE_PROJECT_CODE,
+    run: {
+      complete: true,
+    },
+  },
+};
+
 export default defineConfig({
 
   reporter: [
-    ['playwright-qase-reporter', {
-      testops: {
-        api: {
-          token: process.env.QASE_API_TOKEN,
-        },
-        project: `TAREAS`,
-      },
-    }],
+    ['playwright-qase-reporter', qaseConfig],
     ['html'],
   ],
 
